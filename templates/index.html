@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaptopCare AI</title>
+    <style>
+        :root {
+            --bg: #f4f7fb;
+            --card: rgba(255,255,255,.9);
+            --text: #172033;
+            --muted: #68738a;
+            --accent: #2563eb;
+            --accent-soft: #e8f0ff;
+            --border: #e3e8f1;
+            --user: #2563eb;
+            --bot: #eef3f9;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Inter, Arial, sans-serif;
+            background:
+                radial-gradient(circle at 10% 10%, #dbeafe 0, transparent 28%),
+                radial-gradient(circle at 90% 90%, #e0e7ff 0, transparent 30%),
+                var(--bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 22px;
+        }
+
+        .app {
+            width: min(1050px, 100%);
+            height: min(760px, 92vh);
+            display: grid;
+            grid-template-columns: 285px 1fr;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            background: var(--card);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 24px 70px rgba(28, 44, 76, .16);
+        }
+
+        aside {
+            padding: 28px;
+            background: linear-gradient(160deg, #eff6ff, #f8fafc);
+            border-right: 1px solid var(--border);
+        }
+
+        .logo {
+            width: 52px;
+            height: 52px;
+            display: grid;
+            place-items: center;
+            border-radius: 16px;
+            background: var(--accent);
+            color: white;
+            font-size: 25px;
+            box-shadow: 0 10px 25px rgba(37,99,235,.25);
+        }
+
+        h1 { margin: 18px 0 8px; font-size: 25px; }
+        .tagline { color: var(--muted); line-height: 1.55; font-size: 14px; }
+
+        .topics {
+            margin-top: 28px;
+            display: grid;
+            gap: 9px;
+        }
+
+        .topic {
+            padding: 11px 13px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: white;
+            color: #3f4b61;
+            font-size: 13px;
+        }
+
+        main {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255,255,255,.72);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 0 5px #dcfce7;
+        }
+
+        #chat {
+            flex: 1;
+            overflow-y: auto;
+            padding: 26px;
+        }
+
+        .message {
+            display: flex;
+            margin: 0 0 18px;
+        }
+
+        .message.user { justify-content: flex-end; }
+
+        .bubble {
+            max-width: 78%;
+            padding: 13px 16px;
+            border-radius: 18px;
+            line-height: 1.55;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+
+        .bot .bubble {
+            background: var(--bot);
+            border-bottom-left-radius: 5px;
+        }
+
+        .user .bubble {
+            color: white;
+            background: var(--user);
+            border-bottom-right-radius: 5px;
+        }
+
+        .welcome {
+            text-align: center;
+            padding: 55px 20px 25px;
+        }
+
+        .welcome-icon { font-size: 46px; }
+        .welcome h2 { margin: 12px 0 7px; }
+        .welcome p { color: var(--muted); margin: 0 auto; max-width: 480px; }
+
+        .composer {
+            padding: 17px 20px 20px;
+            border-top: 1px solid var(--border);
+            background: rgba(255,255,255,.8);
+        }
+
+        form {
+            display: flex;
+            gap: 10px;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: white;
+        }
+
+        textarea {
+            flex: 1;
+            border: 0;
+            outline: 0;
+            resize: none;
+            min-height: 42px;
+            max-height: 110px;
+            padding: 10px 11px;
+            font: inherit;
+            color: var(--text);
+        }
+
+        button {
+            align-self: flex-end;
+            border: 0;
+            border-radius: 13px;
+            padding: 12px 17px;
+            background: var(--accent);
+            color: white;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        button:disabled { opacity: .55; cursor: not-allowed; }
+
+        .hint {
+            margin: 9px 4px 0;
+            color: var(--muted);
+            font-size: 11px;
+            text-align: center;
+        }
+
+        @media (max-width: 760px) {
+            body { padding: 0; }
+            .app {
+                height: 100vh;
+                border-radius: 0;
+                grid-template-columns: 1fr;
+            }
+            aside { display: none; }
+            .bubble { max-width: 88%; }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <aside>
+        <div class="logo">💻</div>
+        <h1>LaptopCare AI</h1>
+        <p class="tagline">A focused AI assistant for laptop maintenance, care, troubleshooting, and performance.</p>
+
+        <div class="topics">
+            <div class="topic">🔋 Battery & Charging</div>
+            <div class="topic">🌡️ Overheating</div>
+            <div class="topic">🧹 Cleaning & Care</div>
+            <div class="topic">⚡ Performance</div>
+            <div class="topic">💾 Storage & RAM</div>
+            <div class="topic">🛠️ Basic Troubleshooting</div>
+        </div>
+    </aside>
+
+    <main>
+        <header>
+            <strong>Laptop Maintenance Assistant</strong>
+            <div class="status"><span class="dot"></span> AI Online</div>
+        </header>
+
+        <section id="chat">
+            <div class="welcome" id="welcome">
+                <div class="welcome-icon">🧰</div>
+                <h2>How can I help?</h2>
+                <p>Ask me about cleaning, battery care, overheating, storage, performance, updates, or basic laptop troubleshooting.</p>
+            </div>
+        </section>
+
+        <div class="composer">
+            <form id="chatForm">
+                <textarea id="message" placeholder="Ask a laptop maintenance question..." rows="1" required></textarea>
+                <button id="sendButton" type="submit">Send</button>
+            </form>
+            <div class="hint">Laptop-maintenance questions only</div>
+        </div>
+    </main>
+</div>
+
+<script>
+    const form = document.getElementById("chatForm");
+    const input = document.getElementById("message");
+    const chat = document.getElementById("chat");
+    const sendButton = document.getElementById("sendButton");
+    const welcome = document.getElementById("welcome");
+
+    function addMessage(text, role) {
+        if (welcome) welcome.remove();
+
+        const row = document.createElement("div");
+        row.className = `message ${role}`;
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.textContent = text;
+
+        row.appendChild(bubble);
+        chat.appendChild(row);
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    input.addEventListener("input", () => {
+        input.style.height = "auto";
+        input.style.height = Math.min(input.scrollHeight, 110) + "px";
+    });
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const message = input.value.trim();
+        if (!message) return;
+
+        addMessage(message, "user");
+        input.value = "";
+        input.style.height = "auto";
+        sendButton.disabled = true;
+        sendButton.textContent = "…";
+
+        try {
+            const response = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message })
+            });
+
+            const data = await response.json();
+            addMessage(data.reply || "No response received.", "bot");
+        } catch {
+            addMessage("Unable to reach the chatbot server. Please try again.", "bot");
+        } finally {
+            sendButton.disabled = false;
+            sendButton.textContent = "Send";
+            input.focus();
+        }
+    });
+</script>
+</body>
+</html>
